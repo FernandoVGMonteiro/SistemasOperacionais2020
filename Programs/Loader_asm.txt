@@ -1,0 +1,47 @@
+	ORG	0
+; Os dois READ fazem a leitura do endereço inicial
+; guardando os dois bytes na instrução final de JUMP
+; e alterando a primeira instrução de store (a que
+; salva instrução por instrução)
+	READ
+	STORE	FINAL
+	ADD	OITENTA
+	STORE	GUARDA
+; Lê e guarda o segundo byte do endereço inicial
+	READ
+	STORE+1	FINAL
+	STORE+1	GUARDA
+; Lê o tamanho da fita e subtrai 3 que corresponde
+; aos metadados já processados anteriormente
+	READ
+	SUB	META
+; Checa condição de finalização, se não guarda
+; quantos bytes falta e segue
+INICIO	JUMP0	FINAL
+	STORE	RESTA
+; Lê byte da fita e salva no endereço correspondente
+	READ
+GUARDA	STORE	0
+	LOAD+1	GUARDA
+	ADD	UM
+	JUMP0	INCR
+INCR_RT	STORE+1	GUARDA
+	LOAD	RESTA
+	SUB	UM
+	JUMP	INICIO
+; Instrução de finalização
+FINAL	JUMP	0
+
+; Adiciona uma unidade no MSB do endereço da instrução
+INCR	LOAD	GUARDA
+	ADD	UM
+	STORE	GUARDA
+	JUMP	INCR_RT
+
+; Constantes
+META	DATA	3
+UM	DATA	1
+OITENTA	DATA	80
+; Reserva área para dados do programa
+RESTA	AREA	1
+	END
